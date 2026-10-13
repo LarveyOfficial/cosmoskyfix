@@ -1,0 +1,22 @@
+modLoader = "javafml"
+loaderVersion = "[1,)"
+license = "MIT"
+issueTrackerURL = "https://github.com/LarveyOfficial/cosmoskyfix/issues"
+
+[[mods]]
+modId = "cosmoskyfix"
+version = "${version}"
+displayName = "Cosmonautics Sky Fix"
+authors = "LarveyOfficial"
+displayURL = "https://github.com/LarveyOfficial/cosmoskyfix"
+description = "Throttles Create Cosmonautics' per-tick star plasma texture regeneration on the render thread."
+
+[[mixins]]
+config = "cosmoskyfix.mixins.json"
+
+[[dependencies.cosmoskyfix]]
+modId = "rocketnautics"
+type = "optional"
+versionRange = "[0,)"
+ordering = "AFTER"
+side = "CLIENT"

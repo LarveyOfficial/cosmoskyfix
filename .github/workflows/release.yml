@@ -1,0 +1,50 @@
+name: Build and release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version (leave empty to use the VERSION file)"
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Resolve version
+        id: version
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+        run: |
+          v="${INPUT_VERSION:-$(cat VERSION)}"
+          v="${v#v}"
+          if gh release view "v$v" >/dev/null 2>&1; then
+            echo "::error::Release v$v already exists. Bump VERSION or pass a new version."
+            exit 1
+          fi
+          echo "version=$v" >> "$GITHUB_OUTPUT"
+
+      - name: Build
+        run: ./build.sh "${{ steps.version.outputs.version }}"
+
+      - name: Publish release
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          gh release create "v$VERSION" "build/cosmoskyfix-$VERSION.jar" \
+            --target "$GITHUB_SHA" \
+            --title "Cosmonautics Sky Fix $VERSION" \
+            --generate-notes
