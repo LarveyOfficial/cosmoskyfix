@@ -1,5 +1,10 @@
 # Cosmonautics Sky Fix
 
+[![Available on Modrinth](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/modrinth_vector.svg)](https://modrinth.com/project/yjmmRgLv)
+
+[![Modrinth downloads](https://img.shields.io/modrinth/dt/yjmmRgLv?logo=modrinth&label=downloads&color=00AF5C)](https://modrinth.com/project/yjmmRgLv)
+[![Modrinth version](https://img.shields.io/modrinth/v/yjmmRgLv?logo=modrinth&label=modrinth&color=00AF5C)](https://modrinth.com/project/yjmmRgLv/versions)
+
 A tiny client-side NeoForge mod that fixes a render-thread FPS drain in
 [Create Cosmonautics](https://modrinth.com/mod/create-cosmonatics) (mod id `rocketnautics`) on Minecraft 1.21.1.
 
