@@ -47,7 +47,7 @@ private static void cosmoskyfix$throttle(CallbackInfo ci) {
 
 ## Installation
 
-1. Download the latest `cosmoskyfix-<version>.jar` from [Releases](../../releases).
+1. Download the latest `cosmoskyfix-<version>.jar` from [Modrinth](https://modrinth.com/project/yjmmRgLv) or [Releases](../../releases).
 2. Drop it into your instance's `mods/` folder, next to Cosmonautics.
 3. Launch the game. `latest.log` should list `Cosmonautics Sky Fix` among the loaded mods.
 
@@ -90,8 +90,13 @@ Releases are built by the **Build and release** GitHub Actions workflow
 2. Go to **Actions → Build and release → Run workflow**.
 3. Optionally enter a version; otherwise the `VERSION` file is used.
 
-The workflow builds the jar with `build.sh` and publishes a GitHub release tagged `v<version>`,
-with the jar attached and auto-generated notes. It refuses to overwrite an existing release.
+The workflow builds the jar with `build.sh`, uploads it as a new version to
+[Modrinth](https://modrinth.com/project/yjmmRgLv), then publishes a GitHub release tagged `v<version>`
+with the jar attached and auto-generated notes. It refuses to overwrite an existing GitHub release
+and skips the Modrinth upload if that version number is already there.
+
+The Modrinth upload uses the `MODRINTH_TOKEN` repository secret, a Modrinth personal access token
+with the *Create versions* scope.
 
 ## Project layout
 

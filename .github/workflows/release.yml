@@ -40,6 +40,49 @@ jobs:
       - name: Build
         run: ./build.sh "${{ steps.version.outputs.version }}"
 
+      # Runs before the GitHub release so a failed upload can simply be re-run.
+      - name: Publish to Modrinth
+        env:
+          MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+          MODRINTH_PROJECT: yjmmRgLv
+          COSMONAUTICS_PROJECT: micg1iTH
+          VERSION: ${{ steps.version.outputs.version }}
+          UA: LarveyOfficial/cosmoskyfix (GitHub Actions)
+        run: |
+          existing=$(curl -fsS -H "Authorization: $MODRINTH_TOKEN" -H "User-Agent: $UA" \
+            "https://api.modrinth.com/v2/project/$MODRINTH_PROJECT/version" \
+            | jq --arg v "$VERSION" '[.[] | select(.version_number == $v)] | length')
+          if [ "$existing" != "0" ]; then
+            echo "Version $VERSION already exists on Modrinth, skipping upload."
+            exit 0
+          fi
+
+          jq -n \
+            --arg project "$MODRINTH_PROJECT" \
+            --arg dep "$COSMONAUTICS_PROJECT" \
+            --arg v "$VERSION" \
+            --arg changelog "See https://github.com/$GITHUB_REPOSITORY/releases/tag/v$VERSION" \
+            '{
+              project_id: $project,
+              name: "Cosmonautics Sky Fix \($v)",
+              version_number: $v,
+              changelog: $changelog,
+              version_type: "release",
+              loaders: ["neoforge"],
+              game_versions: ["1.21.1"],
+              dependencies: [{project_id: $dep, dependency_type: "optional"}],
+              featured: true,
+              file_parts: ["file"],
+              primary_file: "file"
+            }' > modrinth.json
+
+          curl -fsS -X POST "https://api.modrinth.com/v2/version" \
+            -H "Authorization: $MODRINTH_TOKEN" \
+            -H "User-Agent: $UA" \
+            -F "data=@modrinth.json;type=application/json" \
+            -F "file=@build/cosmoskyfix-$VERSION.jar;type=application/java-archive" \
+            | jq '{id, version_number}'
+
       - name: Publish release
         env:
           VERSION: ${{ steps.version.outputs.version }}
